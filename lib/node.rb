@@ -2,8 +2,10 @@
 
 # This node holds can hold 3 values
 class Node
-  def initialize(value, left = nil, right = nil)
-    @value = value
+  attr_accessor :data, :left, :right
+
+  def initialize(data, left = nil, right = nil)
+    @data = data
     @left = left
     @right = right
   end
