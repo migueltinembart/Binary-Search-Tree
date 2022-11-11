@@ -9,4 +9,9 @@ class Node
     @left = left
     @right = right
   end
+
+  def to_s
+    @data.to_s
+  end
+
 end
