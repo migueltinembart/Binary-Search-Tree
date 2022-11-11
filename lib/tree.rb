@@ -74,31 +74,31 @@ class Tree
   def inorder(node = @root, array = [])
     return if node.nil?
 
-    yield if block_given?
-    array.push(node.data) unless block_given?
     inorder(node.left, array)
+    yield node.data if block_given?
+    array.push(node.data) unless block_given?
     inorder(node.right, array)
 
     array unless block_given?
   end
 
-  def preorder(node = @root)
+  def preorder(node = @root, array = [])
     return if node.nil?
 
-    preorder(node.left, array)
-    yield if block_given?
+    yield node.data if block_given?
     array.push(node.data) unless block_given?
+    preorder(node.left, array)
     preorder(node.right, array)
 
     array unless block_given?
   end
 
-  def postorder(node = @root)
+  def postorder(node = @root, array = [])
     return if node.nil?
 
-    postorder(node.right, array)
     postorder(node.left, array)
-    yield if block_given?
+    postorder(node.right, array)
+    yield node.data if block_given?
     array.push(node.data) unless block_given?
 
     array unless block_given?
