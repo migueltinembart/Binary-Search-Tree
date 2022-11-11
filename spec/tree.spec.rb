@@ -24,13 +24,29 @@ describe Tree do
     end
   end
 
-  describe '#delete' do
-    it 'removes an element from the tree' do
-      expect(bst.delete(2).data).to eql(2)
-      expect(bst.find(3).left).to eql(nil)
-    end
+  describe '#preorder' do
+    it 'traverses the binary tree in PREORDER and returns an array of all values if no block is given'
 
-    it 'if element only has only 1 child, replace element with child' do
-    end
+    it 'yields every value inside the binary tree and lets every value pass through the block'
+  end
+
+  describe '#inorder' do
+    it 'traverses the binary tree in INORDER and returns an array of all values if no block is given'
+
+    it 'yields every value inside the binary tree and lets every value pass through the block'
+  end
+
+  describe '#postorder' do
+    it 'traverses the binary tree in POSTORDER and returns an array of all values if no block is given'
+
+    it 'yields every value inside the binary tree and lets every value pass through the block'
+  end
+
+  describe '#delete' do
+    it 'removes an element from the tree'
+      #expect(bst.delete(2).data).to eql(2)
+      #expect(bst.find(3).left).to eql(nil)
+
+    it 'if element only has only 1 child, replace element with child'
   end
 end
