@@ -71,29 +71,36 @@ class Tree
     pretty_print(node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
   end
 
-  private
+  def inorder(node = @root, array = [])
+    return if node.nil?
 
-  def inorder(node = @root)
-    return nil if node.nil?
+    yield if block_given?
+    array.push(node.data) unless block_given?
+    inorder(node.left, array)
+    inorder(node.right, array)
 
-    yield node
-    inorder(node.left)
-    inorder(node.right)
+    array unless block_given?
   end
 
   def preorder(node = @root)
-    return nil if node.nil?
+    return if node.nil?
 
-    preorder(node.left)
-    yield node
-    inorder(node.right)
+    preorder(node.left, array)
+    yield if block_given?
+    array.push(node.data) unless block_given?
+    preorder(node.right, array)
+
+    array unless block_given?
   end
 
   def postorder(node = @root)
-    return nil if node.nil?
+    return if node.nil?
 
-    postorder(node.right)
-    postoder(node.left)
-    yield node
+    postorder(node.right, array)
+    postorder(node.left, array)
+    yield if block_given?
+    array.push(node.data) unless block_given?
+
+    array unless block_given?
   end
 end
