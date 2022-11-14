@@ -11,7 +11,10 @@ class Node
   end
 
   def to_s
-    @data.to_s
+    @data
   end
 
+  def inspect
+    @data
+  end
 end
