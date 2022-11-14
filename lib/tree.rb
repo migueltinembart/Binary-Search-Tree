@@ -75,8 +75,7 @@ class Tree
     return if node.nil?
 
     inorder(node.left, array, &block)
-    yield(node) if block_given?
-    array.push(node.data) unless block_given?
+    array.push(block_given? ? block.call(node) : node)
     inorder(node.right, array, &block)
 
     array unless block_given?
@@ -85,8 +84,7 @@ class Tree
   def preorder(node = @root, array = [], &block)
     return if node.nil?
 
-    yield(node) if block_given?
-    array.push(node.data) unless block_given?
+    array.push(block_given? ? block.call(node) : node)
     preorder(node.left, array, &block)
     preorder(node.right, array, &block)
 
@@ -98,9 +96,39 @@ class Tree
 
     postorder(node.left, array, &block)
     postorder(node.right, array, &block)
-    yield(node) if block_given?
-    array.push(node.data) unless block_given?
+    array.push(block_given? ? block.call(node) : node)
 
     array unless block_given?
+  end
+
+  def get_parent(value, node = @root)
+    return nil if node.data == value
+    return node if node.left.data == value || node.right.data
+
+    value > node.data ? get_parent(value, node.right) : get_parent(value, node.left)
+  end
+
+  # 3 cases
+  # case 1: node has no child
+  # case 2: node has 1 child
+  # case 3: node has 2 childs
+
+  # retrieves node to pass to delete function
+  def delete(value, node = @root, parent = nil)
+    return nil unless value.is_a? Integer
+    return if node.nil?
+
+    delete(value, node.left, node) if node.data > value
+    delete(value, node.right, node) if node.data < value
+
+    # case 1 & 2
+    # removes the node if there is one or no child
+    if node.data == value
+      parent.left = node.right if (node.data < parent.data) && node.left.nil?
+      parent.right = node.left if (node.data > parent.data) && node.right.nil?
+
+      # case 3
+      # replace node to be deleted with inorder successor, use block to yield every position
+    end
   end
 end
