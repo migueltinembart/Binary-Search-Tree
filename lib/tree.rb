@@ -28,14 +28,11 @@ class Tree
 
   ## Returns the node if of current value
   # if no node has passed value this functions returns nil
-  def find(value, node = @root)
-    return nil unless value.is_a? Integer
-
-    return node if node.nil? || node.data == value
-
-    return find(value, node.left) if value < node.data
-
-    find(value, node.right)
+  def find(value, current = @root)
+    return nil if current.nil?
+    return current if current.data == value
+    
+    value > current ? find(value, current.right) : find(value, current.left)
   end
 
   def leaf?(value)
@@ -103,7 +100,7 @@ class Tree
 
   def get_parent(value, node = @root)
     return nil if node.data == value
-    return node if node.left.data == value || node.right.data
+    return node if node.left == value || node.right
 
     value > node.data ? get_parent(value, node.right) : get_parent(value, node.left)
   end
@@ -114,21 +111,23 @@ class Tree
   # case 3: node has 2 childs
 
   # retrieves node to pass to delete function
-  def delete(value, node = @root, parent = nil)
-    return nil unless value.is_a? Integer
-    return if node.nil?
+  def delete(value, root = @root)
+    return if find(value).nil?
 
-    delete(value, node.left, node) if node.data > value
-    delete(value, node.right, node) if node.data < value
-
-    # case 1 & 2
-    # removes the node if there is one or no child
-    if node.data == value
-      parent.left = node.right if (node.data < parent.data) && node.left.nil?
-      parent.right = node.left if (node.data > parent.data) && node.right.nil?
-
-      # case 3
-      # replace node to be deleted with inorder successor, use block to yield every position
-    end
+    parent = find_parent(value)
+    if find(value)
   end
+
+  def inorder_successor(root)
+    inorder(root.right).first
+  end
+
+  def find_parent(value, current = @root)
+    return nil if value == @root.data
+    return current if current.left.data == value || current.right.data == value
+
+    value > current ? find_parent(value, current.right) : find_parent(value, current.right)
+  end
+
+
 end
