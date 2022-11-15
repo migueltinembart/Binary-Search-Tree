@@ -35,15 +35,6 @@ class Tree
     value > current ? find(value, current.right) : find(value, current.left)
   end
 
-  def leaf?(value)
-    x = find(value)
-    if x.left.nil? && x.right.nil?
-      false
-    else
-      true
-    end
-  end
-
   def insert(value, node = @root)
     node = Node.new(value) if node.nil?
 
@@ -128,6 +119,4 @@ class Tree
 
     value > current ? find_parent(value, current.right) : find_parent(value, current.right)
   end
-
-
 end
