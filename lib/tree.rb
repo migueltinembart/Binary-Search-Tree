@@ -90,23 +90,52 @@ class Tree
   end
 
   def get_parent(value, node = @root)
-    return nil if node.data == value
-    return node if node.left == value || node.right
+    return nil if @root.data == value
+    return node if node.left.data == value || node.right.data == value
 
     value > node.data ? get_parent(value, node.right) : get_parent(value, node.left)
   end
 
-  # 3 cases
-  # case 1: node has no child
-  # case 2: node has 1 child
-  # case 3: node has 2 childs
-
-  # retrieves node to pass to delete function
   def delete(value, root = @root)
-    return if find(value).nil?
+    return if root.nil?
 
-    parent = find_parent(value)
-    if find(value)
+    delete(value, root.right) if value > root.data
+    delete(value, root.left) if value < root.data
+
+    if root.data == value
+      # case 1 & 2
+      # if left or right null or no child
+      if root.left.nil? || root.right.nil?
+        parent = get_parent(value)
+        binding.pry
+        if root.data > parent.data
+          replace_right_child(root, parent)
+        else
+          replace_left_child(root, parent)
+        end
+      end
+      # case 3
+      # if node has left and right child
+      unless root.left.nil? && root.right.nil?
+        replacement = inorder(root.right).first
+        delete(replacement.data, root.right)
+        replacement.left = root.left
+        replacement.right = root.right
+      end
+    root
+    end
+  end
+
+  def replace_right_child(root, parent)
+    binding.pry
+    parent.right = root.left unless root.left.nil?
+    parent.right = root.right unless root.right.nil?
+  end
+
+  def replace_left_child(root, parent)
+    binding.pry
+    parent.left = root.left unless root.left.nil?
+    parent.left = root.right unless root.right.nil?
   end
 
   def inorder_successor(root)
