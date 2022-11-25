@@ -17,8 +17,4 @@ class Node
   def inspect
     @data
   end
-
-  def ==(other)
-    self.class == other.class && self.data == other.data
-  end
 end
