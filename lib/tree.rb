@@ -161,10 +161,4 @@ class Tree
     parent.right = replacement if replacement.data > parent.data
     parent.left = replacement if replacement.data < parent.data
   end
-
-  def replace_root(node, root = @root)
-    node.left = root.left unless root.left.nil?
-    node.right = root.right unless root.right.nil?
-    @root = node
-  end
 end
