@@ -1,5 +1,7 @@
 # frozen_string_literal: true
+
 require 'pry'
+
 # Creates instance of binary search tree
 class Tree
   require_relative 'node'
@@ -16,9 +18,6 @@ class Tree
     return nil if array.empty?
 
     middle = (array.length - 1) / 2
-
-    # root_node.left = build_tree(array[0...middle])
-    # root_node.right = build_tree(array[(middle + 1)..])
     root_node = Node.new(array[middle])
     root_node.left = build_tree(array.slice(0, (array.length - 1) / 2))
     root_node.right = build_tree(array.slice((array.length - 1) / 2 + 1, array.last))
@@ -31,7 +30,7 @@ class Tree
   def find(value, current = @root)
     return nil if current.nil?
     return current if current.data == value
-    
+
     value > current ? find(value, current.right) : find(value, current.left)
   end
 
@@ -90,9 +89,11 @@ class Tree
   end
 
   def get_parent(value, node = @root)
+    return if node.nil?
     return nil if @root.data == value
     return node if node.left.data == value || node.right.data == value
 
+    binding.pry
     value > node.data ? get_parent(value, node.right) : get_parent(value, node.left)
   end
 
@@ -102,40 +103,26 @@ class Tree
     delete(value, root.right) if value > root.data
     delete(value, root.left) if value < root.data
 
-    if root.data == value
-      # case 1 & 2
-      # if left or right null or no child
-      if root.left.nil? || root.right.nil?
-        parent = get_parent(value)
-        binding.pry
-        if root.data > parent.data
-          replace_right_child(root, parent)
-        else
-          replace_left_child(root, parent)
-        end
-      end
+    if value == @root.data
+      replacement = inorder_successor(@root)
+      binding.pry
+      delete(replacement.data, @root.right)
+      replacement.left = root.left
+      replacement.right = root.right
+      @root = replacement
+    elsif root.data == value && root != @root
+      parent = get_parent(value)
+      # if node has 2 childs
       # case 3
-      # if node has left and right child
-      unless root.left.nil? && root.right.nil?
-        replacement = inorder(root.right).first
-        delete(replacement.data, root.right)
-        replacement.left = root.left
-        replacement.right = root.right
+      # unless (root.left.nil? && root.right.nil?)
+      if root.left.nil? && root.right.nil?
+        remove_leaf(root, parent)
+      elsif root.left.nil? || root.right.nil?
+        remove_node_with_one_leaf(root, parent)
+      else
+        remove_node_with_2_child(root, parent)
       end
-    root
     end
-  end
-
-  def replace_right_child(root, parent)
-    binding.pry
-    parent.right = root.left unless root.left.nil?
-    parent.right = root.right unless root.right.nil?
-  end
-
-  def replace_left_child(root, parent)
-    binding.pry
-    parent.left = root.left unless root.left.nil?
-    parent.left = root.right unless root.right.nil?
   end
 
   def inorder_successor(root)
@@ -147,5 +134,37 @@ class Tree
     return current if current.left.data == value || current.right.data == value
 
     value > current ? find_parent(value, current.right) : find_parent(value, current.right)
+  end
+
+    private
+
+  def remove_leaf(node, parent)
+    parent.left = nil if parent.left.data == node.data
+    parent.right = nil if parent.right.data == node.data
+  end
+
+  def remove_node_with_one_leaf(node, parent)
+    if node.data < parent.data
+      parent.left = node.left unless node.left.nil?
+      parent.left = node.right unless node.right.nil?
+    else
+      parent.right = node.left unless node.left.nil?
+      parent.right = node.right unless node.right.nil?
+    end
+  end
+
+  def remove_node_with_2_child(node, parent)
+    replacement = inorder(node.right).first
+    get_parent(replacement.data).left = nil
+    replacement.left = node.left
+    replacement.right = node.right
+    parent.right = replacement if replacement.data > parent.data
+    parent.left = replacement if replacement.data < parent.data
+  end
+
+  def replace_root(node, root = @root)
+    node.left = root.left unless root.left.nil?
+    node.right = root.right unless root.right.nil?
+    @root = node
   end
 end
